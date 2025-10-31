@@ -738,6 +738,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/user/profile-picture', authMiddleware, upload.single('file'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      const userId = req.user.id;
+      const fileUrl = `/uploads/${req.file.filename}`;
+      
+      const updatedUser = await storage.updateUserProfile(userId, { profileImageUrl: fileUrl });
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error('Error uploading profile picture:', error);
+      res.status(500).json({ message: error.message || 'Failed to upload profile picture' });
+    }
+  });
+
   // Game profile routes
   // Get all game profiles for a user
   app.get('/api/users/:userId/game-profiles', async (req, res) => {
