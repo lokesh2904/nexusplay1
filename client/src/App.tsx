@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -50,6 +50,23 @@ function Router() {
   // ALL hooks must be called before any early returns
   const [currentPage, setCurrentPage] = useState<"home" | "search" | "create" | "profile" | "messages" | "settings" | "profile-setup" | "connections">("home");
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  // Fetch unread notification count for messages badge
+  const { data: unreadCountData } = useQuery<{ count: number }>({
+    queryKey: ["/api/notifications/unread-count"],
+    queryFn: async () => {
+      const response = await fetch('/api/notifications/unread-count');
+      if (!response.ok) {
+        throw new Error('Failed to fetch unread notification count');
+      }
+      return response.json();
+    },
+    refetchInterval: 15000, // Refresh every 15 seconds
+    enabled: isAuthenticated && !!user,
+    retry: 1,
+  });
+
+  const pendingMessagesCount = unreadCountData?.count || 0;
 
   // Auto-redirect authenticated users without gamertag to profile setup
   useEffect(() => {
@@ -327,7 +344,7 @@ function Router() {
                     }}
                     user={mapUserForComponents(user)}
                     onLogout={handleLogout}
-                    pendingMessages={3}
+                    pendingMessages={pendingMessagesCount}
                   />
                 )}
                 {renderMainContent()}
