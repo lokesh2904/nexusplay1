@@ -103,6 +103,7 @@ export interface IStorage {
   markNotificationAsRead(id: string, userId: string): Promise<Notification>;
   deleteNotification(id: string, userId: string): Promise<void>;
   getUnreadNotificationCount(userId: string): Promise<number>;
+  getUnreadMessageSendersCount(userId: string): Promise<number>;
   
   // Game profile operations
   createGameProfile(profile: InsertGameProfile): Promise<GameProfile>;
@@ -624,6 +625,7 @@ export class DatabaseStorage implements IStorage {
         senderId: chatMessages.senderId,
         receiverId: chatMessages.receiverId,
         message: chatMessages.message,
+        isRead: chatMessages.isRead,
         createdAt: chatMessages.createdAt,
         senderGamertag: users.gamertag,
         senderProfileImageUrl: users.profileImageUrl,
@@ -653,6 +655,7 @@ export class DatabaseStorage implements IStorage {
         senderId: chatMessages.senderId,
         receiverId: chatMessages.receiverId,
         message: chatMessages.message,
+        isRead: chatMessages.isRead,
         createdAt: chatMessages.createdAt,
         senderGamertag: users.gamertag,
         senderProfileImageUrl: users.profileImageUrl,
@@ -744,6 +747,18 @@ export class DatabaseStorage implements IStorage {
       ));
     
     return result[0]?.count || 0;
+  }
+
+  async getUnreadMessageSendersCount(userId: string): Promise<number> {
+    const result = await db
+      .select({ senderCount: sql<number>`count(distinct ${chatMessages.senderId})::int` })
+      .from(chatMessages)
+      .where(and(
+        eq(chatMessages.receiverId, userId),
+        eq(chatMessages.isRead, "false")
+      ));
+    
+    return result[0]?.senderCount || 0;
   }
 
   // Game profile operations

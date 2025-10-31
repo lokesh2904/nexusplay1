@@ -120,8 +120,11 @@ export const chatMessages = pgTable("chat_messages", {
   senderId: varchar("sender_id").notNull().references(() => users.id),
   receiverId: varchar("receiver_id").notNull().references(() => users.id),
   message: text("message").notNull(),
+  isRead: varchar("is_read").notNull().default("false"),
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table) => [
+  index("idx_receiver_unread").on(table.receiverId, table.isRead),
+]);
 
 // Notifications table - stores user notifications for various events
 export const notifications = pgTable("notifications", {

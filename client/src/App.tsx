@@ -51,13 +51,13 @@ function Router() {
   const [currentPage, setCurrentPage] = useState<"home" | "search" | "create" | "profile" | "messages" | "settings" | "profile-setup" | "connections">("home");
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  // Fetch unread notification count for messages badge
-  const { data: unreadCountData } = useQuery<{ count: number }>({
-    queryKey: ["/api/notifications/unread-count"],
+  // Fetch unread message senders count for messages badge
+  const { data: unreadSendersData } = useQuery<{ count: number }>({
+    queryKey: ["/api/messages/unread-senders-count"],
     queryFn: async () => {
-      const response = await fetch('/api/notifications/unread-count');
+      const response = await fetch('/api/messages/unread-senders-count');
       if (!response.ok) {
-        throw new Error('Failed to fetch unread notification count');
+        throw new Error('Failed to fetch unread message senders count');
       }
       return response.json();
     },
@@ -66,7 +66,7 @@ function Router() {
     retry: 1,
   });
 
-  const pendingMessagesCount = unreadCountData?.count || 0;
+  const pendingMessagesCount = unreadSendersData?.count || 0;
 
   // Auto-redirect authenticated users without gamertag to profile setup
   useEffect(() => {
