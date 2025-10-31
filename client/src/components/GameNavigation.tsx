@@ -102,6 +102,17 @@ export function GameNavigation({
         </div>
 
         <div className="flex flex-col gap-2">
+          {user && (
+            <div className="flex items-center justify-center mb-2">
+              <Avatar className="h-10 w-10 border-2 border-primary/30 hover:border-primary/60 transition-all duration-300 hover:scale-110 cursor-pointer" onClick={() => onNavigate('profile')}>
+                <AvatarImage src={user.profileImageUrl} alt={user.gamertag} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  {user.gamertag.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          )}
+          
           <div className="flex items-center justify-center">
             <NotificationBell />
           </div>
