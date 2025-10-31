@@ -18,6 +18,7 @@ import type { GameProfile } from "@shared/schema";
 import { GameProfileForm } from "./GameProfileForm";
 import { CustomPortfolio } from "./CustomPortfolio";
 import { Mutuals } from "./Mutuals";
+import { ProfilePictureUpload } from "./ProfilePictureUpload";
 
 interface UserProfileProps {
   id: string;
@@ -88,6 +89,14 @@ export function UserProfile({
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
+      {/* Profile Picture Upload - Only shown on own profile */}
+      {isOwn && (
+        <ProfilePictureUpload 
+          currentImageUrl={profileImageUrl || undefined}
+          gamertag={gamertag}
+        />
+      )}
+
       <Card>
         <CardHeader className="pb-4">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">

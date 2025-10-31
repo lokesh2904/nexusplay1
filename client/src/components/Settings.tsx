@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { PrivacySettings } from "./PrivacySettings";
-import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import { Users as UsersIcon } from "lucide-react";
 import type { User } from "@shared/schema";
 
@@ -28,14 +27,6 @@ export function Settings({ user }: SettingsProps) {
       <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
       
       <div className="space-y-6">
-        {/* Profile Picture Upload */}
-        {user && (
-          <ProfilePictureUpload 
-            currentImageUrl={user.profileImageUrl || undefined}
-            gamertag={user.gamertag}
-          />
-        )}
-
         {/* User Count */}
         <Card>
           <CardHeader>
